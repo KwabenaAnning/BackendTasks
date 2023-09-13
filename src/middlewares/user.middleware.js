@@ -1,11 +1,11 @@
 // check if the user account exists 
 const { runQuery } = require('../config/database.config');
-const { fetchTasksById } = require('../queries/user');
+const { fetchUserById } = require('../queries/user');
 
 const checkIfIdExists = async (req, res, next) => {
   try {
     const { user_id } = req.params;
-    const [user = null] = await runQuery(fetchTasksById, [user_id]);
+    const [user = null] = await runQuery(fetchUserById, [user_id]);
     if (!user) {
       return res.status(400).json({
         status: 'error',

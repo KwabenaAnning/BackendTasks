@@ -33,10 +33,17 @@ WHERE tasks=$3
 RETURNING *
 `;
 
+const updateUserTask = `
+  UPDATE tasks
+  SET completed = $1
+  WHERE id = $2
+`;
+
 module.exports ={
     createTasks,
     fetchTasksById,
     fetchAllTAsks,
     fetchTaskByUser,
-    editTask
+    editTask,
+    updateUserTask
 };

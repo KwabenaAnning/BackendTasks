@@ -10,8 +10,14 @@ const findUserByEmail = `
  SELECT id, email, password FROM users WHERE email =$1
 `
 
+const fetchAllUsers = `SELECT id, email FROM users`
+
+const fetchUserById = `SELECT id, email FROM users WHERE id=$1`
+
 module.exports ={
     addUser, 
-    findUserByEmail
+    findUserByEmail,
+    fetchAllUsers,
+    fetchUserById
 }
 
