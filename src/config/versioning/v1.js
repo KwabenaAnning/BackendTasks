@@ -1,14 +1,14 @@
 const express = require('express');
 const api = express.Router()
 const users = require('../../routes/user')
-// const books = require('../../routes/book')
+const task = require('../../routes/tasks')
 
 api.get("/", (req, res) => res.status(200).json({
     status: 'success',
-    message: 'Welcome to My Books App API'
+    message: 'Welcome User to your tasks API'
 }))
 
 api.use("/users", users);
-// api.use("/books", books);
+api.use("/tasks", task);
 
 module.exports = api

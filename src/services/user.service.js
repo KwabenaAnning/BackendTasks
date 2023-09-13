@@ -1,38 +1,39 @@
-const { addUser, findUserByUserName } = require('../queries/user');
+const { addUser, findUserByEmail } = require('../queries/user');
 const { runQuery } = require('../config/database.config');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config/env/index')
-
+// checking for the user existence
 const createUser = async (body) => {
-    const { password, username,firstname,lastname} = body
-    // Check if user already exist in db
-    const userExist = await runQuery(findUserByUserName, [username])
-    if (userExist.length > 0) {
-        throw {
+    const {email, password} =body
+
+    const userExist =await runQuery(findUserByEmail, [email])
+    if (userExist.length > 0){
+        throw{
             code: 409,
-            message: 'User already exists',
-            data: null,
+            message:'E don exist oo',
+            data:  null,
             status: 'error'
         }
     }
-    const saltRounds = 12;
+
+    const saltRounds = 15;
     const hash = bcrypt.hashSync(password, saltRounds);
-    const response = await runQuery(addUser, [firstname, username, hash, "user"])
+    const response = await runQuery(addUser, [email, hash])
 
     return {
         code: 201,
         status: 'success',
-        message: 'New user added successfully',
+        message: 'Welcome onboard!!! .New user added successfully',
         data: response[0]
     }
 }
 
 const loginUser = async (body) => {
-    const { username, password } = body;
+    const { email, password } = body;
 
     // Check if that user exists inside the db
-    const user = await runQuery(findUserByUserName, [username]);
+    const user = await runQuery(findUserByEmail, [email]);
     if (user.length === 0) {
         throw {
             code: 404,
@@ -42,7 +43,7 @@ const loginUser = async (body) => {
         }
     }
     // Compare user passwords
-    const { password: dbPassword, firstname, lastname, id } = user[0];
+    const { password: dbPassword, id } = user[0];
     console.log(user[0])
     const userPassword = bcrypt.compareSync(password, dbPassword); // Boolean true/false
     if (!userPassword) {
@@ -61,9 +62,7 @@ const loginUser = async (body) => {
     // Generate token for authentication purposes
     const token = jwt.sign({
         id,
-        firstname,
-        username,
-        lastname
+        email
     }, config.JWT_SECRET_KEY, options);
     return {
         status: 'success',
@@ -71,10 +70,8 @@ const loginUser = async (body) => {
         code: 200,
         data: {
             id,
-            firstname,
-            lastname,
-            username,
-            token
+           email,
+        token
         }
     }
 }
